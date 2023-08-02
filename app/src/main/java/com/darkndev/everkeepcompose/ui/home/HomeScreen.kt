@@ -23,7 +23,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkndev.everkeepcompose.models.Note
-import com.darkndev.everkeepcompose.ui.composables.NoteComposable
+import com.darkndev.everkeepcompose.ui.home.composable.NoteCard
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -73,7 +72,7 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(notes, key = { it.id }) { note ->
-                NoteComposable(
+                NoteCard(
                     note = note,
                     modifier = Modifier
                         .fillMaxWidth()

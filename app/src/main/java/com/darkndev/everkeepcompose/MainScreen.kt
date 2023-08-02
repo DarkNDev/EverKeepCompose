@@ -6,27 +6,21 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.core.os.bundleOf
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.darkndev.everkeepcompose.models.Note
 import com.darkndev.everkeepcompose.ui.home.HomeScreen
 import com.darkndev.everkeepcompose.ui.note.NoteScreen
+import com.darkndev.everkeepcompose.ui.note.NoteViewModel
 import com.darkndev.everkeepcompose.ui.theme.EverKeepComposeTheme
 import com.darkndev.everkeepcompose.ui.theme.NoteComposeTheme
 import com.darkndev.everkeepcompose.utils.Routes
-import com.darkndev.everkeepcompose.utils.getColor
 import com.darkndev.everkeepcompose.utils.navigate
-import com.darkndev.everkeepcompose.utils.parcelable
 
 @Composable
 fun MainScreen() {
@@ -88,9 +82,9 @@ fun MainScreen() {
                 ) + fadeOut(animationSpec = tween(300))
             }
         ) {
-            val note = it.arguments?.parcelable<Note>("note")
-            NoteComposeTheme(colors = getColor(note?.color)) {
-                NoteScreen {
+            val viewModel: NoteViewModel = hiltViewModel()
+            NoteComposeTheme(viewModel = viewModel) {
+                NoteScreen(viewModel = viewModel) {
                     navController.popBackStack()
                 }
             }

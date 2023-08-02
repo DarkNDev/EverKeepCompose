@@ -1,7 +1,10 @@
 package com.darkndev.everkeepcompose.ui.note
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -24,29 +26,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.darkndev.everkeepcompose.ui.composables.NoteTextField
+import com.darkndev.everkeepcompose.models.Note
+import com.darkndev.everkeepcompose.ui.note.composable.NoteColorButton
+import com.darkndev.everkeepcompose.ui.note.composable.NoteTextField
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NoteScreen(
-    viewModel: NoteViewModel = hiltViewModel(),
+    viewModel: NoteViewModel,
     navigate: () -> Unit
 ) {
-    var title by rememberSaveable {
-        mutableStateOf(viewModel.note?.title)
-    }
-    var content by rememberSaveable {
-        mutableStateOf(viewModel.note?.content)
-    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,7 +47,7 @@ fun NoteScreen(
                     Text(text = "")
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.doneClicked(title, content, navigate) }) {
+                    IconButton(onClick = { viewModel.doneClicked(navigate) }) {
                         Icon(
                             imageVector = Icons.Default.Done,
                             contentDescription = "Done"
@@ -77,10 +70,10 @@ fun NoteScreen(
                 }
             )
         },
-        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { contentPadding ->
         val scrollState = rememberScrollState()
+        val scrollColorState = rememberScrollState()
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -90,9 +83,27 @@ fun NoteScreen(
                 .systemBarsPadding()
                 .verticalScroll(scrollState),
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .horizontalScroll(scrollColorState),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                NoteColorButton(
+                    viewModel = viewModel,
+                    reference = -1
+                )
+                Note.colorReference.forEach { reference ->
+                    NoteColorButton(
+                        viewModel = viewModel,
+                        reference = reference
+                    )
+                }
+            }
             NoteTextField(
-                value = title ?: "",
-                onValueChange = { title = it },
+                value = viewModel.title,
+                onValueChange = { viewModel.titleChanged(it) },
                 hintText = "Enter Title",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,8 +115,8 @@ fun NoteScreen(
                 )
             )
             NoteTextField(
-                value = content ?: "",
-                onValueChange = { content = it },
+                value = viewModel.content,
+                onValueChange = { viewModel.contentChanged(it) },
                 hintText = "Enter Content",
                 modifier = Modifier
                     .fillMaxSize()

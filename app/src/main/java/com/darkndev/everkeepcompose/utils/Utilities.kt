@@ -1,8 +1,5 @@
 package com.darkndev.everkeepcompose.utils
 
-import android.os.Build
-import android.os.Bundle
-import android.os.Parcelable
 import androidx.compose.ui.graphics.Color
 import com.darkndev.everkeepcompose.ui.theme.*
 import java.time.Instant
@@ -32,12 +29,6 @@ fun getFormatTime(modifiedMillis: Long): String {
     }
 }
 
-fun getTitle(route: String?) = when (route) {
-    Routes.HomeScreen.route -> "All Notes"
-    Routes.NoteScreen.route -> "Edit Note"
-    else -> ""
-}
-
 fun getColor(ref: Int?): Pair<Color, Color> = when (ref) {
     0 -> Pair(Teal200, Teal700)
     1 -> Pair(Red200, Red700)
@@ -48,9 +39,4 @@ fun getColor(ref: Int?): Pair<Color, Color> = when (ref) {
     6 -> Pair(DeepOrange200, DeepOrange700)
     7 -> Pair(Purple200, Purple700)
     else -> Pair(Color(0xFFFFFBFE), Color(0xFF1C1B1F))
-}
-
-inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
-    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getParcelable(key, T::class.java)
-    else -> @Suppress("DEPRECATION") getParcelable(key) as? T
 }
