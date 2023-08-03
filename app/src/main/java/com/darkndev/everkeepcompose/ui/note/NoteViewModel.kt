@@ -27,7 +27,7 @@ class NoteViewModel @Inject constructor(
     val note = state.get<Note>("note")
 
     val allLabels = labelDao.getAllLabels()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     var title by mutableStateOf(state.get<String>("title") ?: note?.title ?: "")
         private set

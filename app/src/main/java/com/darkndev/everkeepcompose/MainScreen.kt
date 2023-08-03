@@ -15,6 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.darkndev.everkeepcompose.ui.home.HomeScreen
+import com.darkndev.everkeepcompose.ui.label.LabelScreen
+import com.darkndev.everkeepcompose.ui.label.LabelViewModel
 import com.darkndev.everkeepcompose.ui.note.NoteScreen
 import com.darkndev.everkeepcompose.ui.note.NoteViewModel
 import com.darkndev.everkeepcompose.ui.theme.EverKeepComposeTheme
@@ -53,12 +55,16 @@ fun MainScreen() {
             }
         ) {
             EverKeepComposeTheme {
-                HomeScreen { note ->
-                    navController.navigate(
-                        route = Routes.NoteScreen.route,
-                        args = bundleOf("note" to note)
-                    )
-                }
+                HomeScreen(
+                    navigateNoteScreen = { note ->
+                        navController.navigate(
+                            route = Routes.NoteScreen.route,
+                            args = bundleOf("note" to note)
+                        )
+                    }, navigateLabelScreen = {
+                        navController.navigate(route = Routes.LabelScreen.route)
+                    }
+                )
             }
         }
         composable(
@@ -85,6 +91,34 @@ fun MainScreen() {
             val viewModel: NoteViewModel = hiltViewModel()
             NoteComposeTheme(viewModel = viewModel) {
                 NoteScreen(viewModel = viewModel) {
+                    navController.popBackStack()
+                }
+            }
+        }
+        composable(
+            route = Routes.LabelScreen.route,
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { 300 },
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeIn(animationSpec = tween(300))
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { 300 },
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeOut(animationSpec = tween(300))
+            }
+        ) {
+            val viewModel: LabelViewModel = hiltViewModel()
+            EverKeepComposeTheme {
+                LabelScreen(viewModel = viewModel) {
                     navController.popBackStack()
                 }
             }

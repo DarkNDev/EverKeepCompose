@@ -1,6 +1,11 @@
 package com.darkndev.everkeepcompose.ui.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +20,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Label
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,8 +34,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,19 +46,25 @@ import com.darkndev.everkeepcompose.models.Note
 import com.darkndev.everkeepcompose.ui.home.HomeViewModel.Companion.ALL
 import com.darkndev.everkeepcompose.ui.home.composable.LabelCard
 import com.darkndev.everkeepcompose.ui.home.composable.NoteCard
+import com.darkndev.everkeepcompose.ui.home.composable.SortSection
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    navigate: (note: Note?) -> Unit
+    navigateNoteScreen: (note: Note?) -> Unit,
+    navigateLabelScreen: () -> Unit
 ) {
     val notes by viewModel.allNotes.collectAsStateWithLifecycle()
     val labels by viewModel.allLabels.collectAsStateWithLifecycle()
     val selectedLabel by viewModel.selectedLabel.collectAsStateWithLifecycle()
+    val sortOrder by viewModel.preferences.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    var sortOrderSectionVisible by remember {
+        mutableStateOf(false)
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -57,10 +72,22 @@ fun HomeScreen(
                     Text(text = "All Notes")
                 },
                 actions = {
-                    IconButton(onClick = { navigate(null) }) {
+                    IconButton(onClick = { navigateNoteScreen(null) }) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add Note"
+                        )
+                    }
+                    IconButton(onClick = navigateLabelScreen) {
+                        Icon(
+                            imageVector = Icons.Default.Label,
+                            contentDescription = "Manage Labels"
+                        )
+                    }
+                    IconButton(onClick = { sortOrderSectionVisible = !sortOrderSectionVisible }) {
+                        Icon(
+                            imageVector = Icons.Default.Sort,
+                            contentDescription = "Sort Notes"
                         )
                     }
                 }
@@ -74,6 +101,15 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(contentPadding)
         ) {
+            AnimatedVisibility(
+                visible = sortOrderSectionVisible,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically()
+            ) {
+                SortSection(sortOrder = sortOrder) {
+                    viewModel.sortOrderChanged(it)
+                }
+            }
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -107,7 +143,7 @@ fun HomeScreen(
                             .animateItemPlacement(
                                 tween(300)
                             ),
-                        navigate = { navigate(note) },
+                        navigate = { navigateNoteScreen(note) },
                         delete = {
                             viewModel.deleteNote(note) {
                                 coroutineScope.launch {
