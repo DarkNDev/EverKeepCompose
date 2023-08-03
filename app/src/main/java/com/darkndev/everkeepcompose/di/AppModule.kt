@@ -28,7 +28,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideDao(database: EverKeepDatabase) = database.noteDao()
+    fun provideNoteDao(database: EverKeepDatabase) = database.noteDao()
+
+    @Singleton
+    @Provides
+    fun provideLabelDao(database: EverKeepDatabase) = database.labelDao()
 
     @EverKeepScope
     @Provides

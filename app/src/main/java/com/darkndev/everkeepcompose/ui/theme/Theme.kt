@@ -69,7 +69,7 @@ fun NoteComposeTheme(
             )
         )
     }
-    LaunchedEffect(key1 = colorsRef){
+    LaunchedEffect(key1 = colorsRef) {
         contentColor.animateTo(
             targetValue = getColor(colorsRef).second,
             animationSpec = tween(
@@ -136,6 +136,32 @@ fun NoteCardTheme(
             surface = colors.first,
             onBackground = colors.second,
             onSurface = colors.second,
+        )
+    }
+    MaterialTheme(
+        colorScheme = colorScheme,
+        content = content
+    )
+}
+
+@Composable
+fun LabelBoxTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when {
+        darkTheme -> darkColorScheme(
+            primary = Color(0xFFFFFBFE),
+            secondary = Color(0xFF1C1B1F),
+            onPrimary = Color(0xFF1C1B1F),
+            onSecondary = Color(0xFFFFFBFE),
+        )
+
+        else -> lightColorScheme(
+            primary = Color(0xFF1C1B1F),
+            secondary = Color(0xFFFFFBFE),
+            onPrimary = Color(0xFFFFFBFE),
+            onSecondary = Color(0xFF1C1B1F)
         )
     }
     MaterialTheme(

@@ -8,15 +8,12 @@ import kotlinx.coroutines.flow.Flow
 interface NoteDao {
 
     @Upsert
-    suspend fun insertNote(vararg note: Note)
-
-    @Update
-    suspend fun updateNote(note: Note)
+    suspend fun upsertNote(vararg note: Note)
 
     @Query("DELETE FROM note WHERE id=:noteId")
     suspend fun deleteNote(noteId: Int)
 
-    @Query("SELECT * FROM note ORDER BY title")
+    @Query("SELECT * FROM note ORDER BY priority DESC")
     fun getAllNotes(): Flow<List<Note>>
 
 }

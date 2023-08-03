@@ -21,7 +21,7 @@ import com.darkndev.everkeepcompose.utils.getColor
 
 @Composable
 fun NoteColorButton(viewModel: NoteViewModel, reference: Int) {
-    val colorInt = getColor(reference).first
+    val colorInt = getColor(reference).second
     Box(
         modifier = Modifier
             .size(70.dp)
@@ -38,7 +38,7 @@ fun NoteColorButton(viewModel: NoteViewModel, reference: Int) {
             imageVector = Icons.Default.Check,
             contentDescription = "Selected",
             tint = if (viewModel.colorRef == reference) {
-                getColor(reference).second
+                getColor(reference).first
             } else Color.Transparent
         )
     }

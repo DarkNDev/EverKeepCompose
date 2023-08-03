@@ -14,6 +14,8 @@ data class Note(
     val title: String,
     val content: String,
     val timestamp: Long = System.currentTimeMillis(),
+    val priority: Float = 0f,
+    val label: String = "Normal",
     val color: Int = colorReference.random()
 ) : Parcelable {
     fun toTime() = getFormatTime(timestamp)

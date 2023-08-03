@@ -39,26 +39,26 @@ val LightColorScheme = lightColorScheme(
 )
 
 //card colors
-val Teal700 = Color(0xFF00796B)
+val Teal700 = Color(0xFF339489)
 val Teal200 = Color(0xFFB2DFDB)
 
-val Red700 = Color(0xFFD32F2F)
+val Red700 = Color(0xFFdc5959)
 val Red200 = Color(0xFFFFC4C4)
 
-val Brown700 = Color(0xFF5D4037)
+val Brown700 = Color(0xFF7d665f)
 val Brown200 = Color(0xFFD7CCC8)
 
-val LightBlue700 = Color(0xFF0288D1)
+val LightBlue700 = Color(0xFF35a0da)
 val LightBlue200 = Color(0xFFB3E5FC)
 
-val Green700 = Color(0xFF388E3C)
+val Green700 = Color(0xFF60a563)
 val Green200 = Color(0xFFC8E6C9)
 
-val Pink700 = Color(0xFFC2185B)
+val Pink700 = Color(0xFFce467c)
 val Pink200 = Color(0xFFF8BBD0)
 
-val DeepOrange700 = Color(0xFFD84315)
+val DeepOrange700 = Color(0xFFe06944)
 val DeepOrange200 = Color(0xFFFFCCBC)
 
-val Purple700 = Color(0xFF9C27B0)
+val Purple700 = Color(0xFFb052c0)
 val Purple200 = Color(0xFFE1BEE7)
