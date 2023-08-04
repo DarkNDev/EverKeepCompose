@@ -2,7 +2,6 @@ package com.darkndev.everkeepcompose.ui.label
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -41,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkndev.everkeepcompose.ui.label.composable.DeleteLabelCard
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun LabelScreen(
     viewModel: LabelViewModel,

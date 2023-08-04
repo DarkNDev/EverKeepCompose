@@ -2,7 +2,6 @@ package com.darkndev.everkeepcompose.ui.note.composable
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -27,7 +26,6 @@ import com.darkndev.everkeepcompose.ui.home.composable.LabelCard
 import com.darkndev.everkeepcompose.ui.note.NoteViewModel
 import com.darkndev.everkeepcompose.ui.theme.NoteComposeTheme
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NoteCustomiseSection(
     viewModel: NoteViewModel,

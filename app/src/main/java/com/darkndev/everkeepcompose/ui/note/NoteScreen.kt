@@ -1,7 +1,6 @@
 package com.darkndev.everkeepcompose.ui.note
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,7 +35,6 @@ import com.darkndev.everkeepcompose.ui.note.composable.NoteCustomiseSection
 import com.darkndev.everkeepcompose.ui.note.composable.NoteTextField
 import com.darkndev.everkeepcompose.ui.theme.EverKeepComposeTheme
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NoteScreen(
     viewModel: NoteViewModel,
