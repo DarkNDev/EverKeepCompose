@@ -1,5 +1,6 @@
 package com.darkndev.everkeepcompose.ui.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -19,8 +20,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Label
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkndev.everkeepcompose.models.Note
 import com.darkndev.everkeepcompose.ui.home.HomeViewModel.Companion.ALL
+import com.darkndev.everkeepcompose.ui.home.composable.NoteSearchBar
 import com.darkndev.everkeepcompose.ui.home.composable.LabelCard
 import com.darkndev.everkeepcompose.ui.home.composable.NoteCard
 import com.darkndev.everkeepcompose.ui.home.composable.SortSection
@@ -52,7 +58,8 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     navigateNoteScreen: (note: Note?) -> Unit,
-    navigateLabelScreen: () -> Unit
+    navigateLabelScreen: () -> Unit,
+    navigateArchivedScreen: () -> Unit
 ) {
     val notes by viewModel.allNotes.collectAsStateWithLifecycle()
     val labels by viewModel.allLabels.collectAsStateWithLifecycle()
@@ -63,35 +70,98 @@ fun HomeScreen(
     var sortOrderSectionVisible by remember {
         mutableStateOf(false)
     }
+    var searchBarState by remember {
+        mutableStateOf(false)
+    }
+    var queryText by remember {
+        mutableStateOf("")
+    }
+    BackHandler(enabled = searchBarState || sortOrderSectionVisible) {
+        queryText = ""
+        searchBarState = false
+        sortOrderSectionVisible = false
+    }
+    var dropDownMenuState by remember {
+        mutableStateOf(false)
+    }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "All Notes")
-                },
-                actions = {
-                    IconButton(onClick = { navigateNoteScreen(null) }) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add Note"
-                        )
+            if (searchBarState) {
+                NoteSearchBar(
+                    queryText = queryText,
+                    onQueryTextChange = { queryText = it },
+                    closeSearchOnClick = {
+                        queryText = ""
+                        searchBarState = !searchBarState
+                    },
+                    clearTextOnClick = { queryText = "" }
+                )
+            } else {
+                TopAppBar(
+                    title = {
+                        Text(text = "All Notes")
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            searchBarState = !searchBarState
+                            sortOrderSectionVisible = false
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search"
+                            )
+                        }
+                        IconButton(onClick = {
+                            sortOrderSectionVisible = !sortOrderSectionVisible
+                            searchBarState = false
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Sort,
+                                contentDescription = "Sort Notes"
+                            )
+                        }
+                        IconButton(onClick = { dropDownMenuState = !dropDownMenuState }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "Others"
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = dropDownMenuState,
+                            onDismissRequest = { dropDownMenuState = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(text = "Labels") },
+                                onClick = {
+                                    dropDownMenuState = false
+                                    navigateLabelScreen()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(text = "Archived") },
+                                onClick = {
+                                    dropDownMenuState = false
+                                    navigateArchivedScreen()
+                                }
+                            )
+                        }
                     }
-                    IconButton(onClick = navigateLabelScreen) {
-                        Icon(
-                            imageVector = Icons.Default.Label,
-                            contentDescription = "Manage Labels"
-                        )
-                    }
-                    IconButton(onClick = { sortOrderSectionVisible = !sortOrderSectionVisible }) {
-                        Icon(
-                            imageVector = Icons.Default.Sort,
-                            contentDescription = "Sort Notes"
-                        )
-                    }
-                }
-            )
+                )
+            }
         },
         snackbarHost = { SnackbarHost(snackBarHostState) },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navigateNoteScreen(null) },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.background
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Note"
+                )
+            }
+        },
         containerColor = MaterialTheme.colorScheme.background
     ) { contentPadding ->
         Column(
@@ -133,7 +203,9 @@ fun HomeScreen(
                 verticalItemSpacing = 8.dp,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(notes, key = { it.id }) { note ->
+                items(notes.filter {
+                    if (queryText.isBlank()) true else it.title.contains(queryText, true)
+                }, key = { it.id }) { note ->
                     NoteCard(
                         note = note,
                         modifier = Modifier

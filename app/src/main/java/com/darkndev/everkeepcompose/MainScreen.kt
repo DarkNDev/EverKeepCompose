@@ -14,6 +14,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.darkndev.everkeepcompose.ui.archived.ArchivedScreen
+import com.darkndev.everkeepcompose.ui.archived.ArchivedViewModel
 import com.darkndev.everkeepcompose.ui.home.HomeScreen
 import com.darkndev.everkeepcompose.ui.label.LabelScreen
 import com.darkndev.everkeepcompose.ui.label.LabelViewModel
@@ -63,6 +65,8 @@ fun MainScreen() {
                         )
                     }, navigateLabelScreen = {
                         navController.navigate(route = Routes.LabelScreen.route)
+                    }, navigateArchivedScreen = {
+                        navController.navigate(route = Routes.ArchivedScreen.route)
                     }
                 )
             }
@@ -121,6 +125,50 @@ fun MainScreen() {
                 LabelScreen(viewModel = viewModel) {
                     navController.popBackStack()
                 }
+            }
+        }
+        composable(
+            route = Routes.ArchivedScreen.route,
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { 300 },
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeIn(animationSpec = tween(300))
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -300 },
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeIn(animationSpec = tween(300))
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { 300 },
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + fadeOut(animationSpec = tween(300))
+            }
+        ) {
+            val viewModel: ArchivedViewModel = hiltViewModel()
+            EverKeepComposeTheme {
+                ArchivedScreen(
+                    viewModel = viewModel,
+                    navigateNoteScreen = { note ->
+                        navController.navigate(
+                            route = Routes.NoteScreen.route,
+                            args = bundleOf("note" to note)
+                        )
+                    },
+                    navigateBack = { navController.popBackStack() }
+                )
             }
         }
     }

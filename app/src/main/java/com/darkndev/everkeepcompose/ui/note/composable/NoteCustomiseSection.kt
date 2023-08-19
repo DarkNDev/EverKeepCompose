@@ -1,5 +1,6 @@
 package com.darkndev.everkeepcompose.ui.note.composable
 
+import android.widget.Toast
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
@@ -9,6 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Archive
+import androidx.compose.material.icons.outlined.ContentCopy
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.Unarchive
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
@@ -17,6 +25,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -29,20 +38,59 @@ import com.darkndev.everkeepcompose.ui.theme.NoteComposeTheme
 @Composable
 fun NoteCustomiseSection(
     viewModel: NoteViewModel,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    navigate: () -> Unit
 ) {
     val scrollColorState = rememberScrollState()
-    val sheetState = rememberModalBottomSheetState()
+    val scrollSettingState = rememberScrollState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val labels by viewModel.allLabels.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         windowInsets = WindowInsets(0, 0, 0, 0)
     ) {
+        viewModel.note?.let { note ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(scrollSettingState),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                SettingItem(imageVector = Icons.Outlined.Share, contentDescription = "Share") {
+                    onDismissRequest()
+                    viewModel.shareClicked(context)
+                }
+                SettingItem(imageVector = Icons.Outlined.ContentCopy, contentDescription = "Copy") {
+                    onDismissRequest()
+                    viewModel.copyClicked {
+                        Toast.makeText(context, "Note copy created", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                SettingItem(imageVector = Icons.Outlined.Delete, contentDescription = "Delete") {
+                    onDismissRequest()
+                    viewModel.deleteClicked(navigate)
+                }
+                SettingItem(
+                    imageVector = if (note.archived) Icons.Outlined.Unarchive else Icons.Outlined.Archive,
+                    contentDescription = if (note.archived) "Unarchive" else "Archive"
+                ) {
+                    onDismissRequest()
+                    viewModel.archiveClicked(navigate)
+                }
+            }
+            Divider(
+                modifier = Modifier.padding(
+                    top = 24.dp,
+                    bottom = 16.dp
+                )
+            )
+        }
         Text(
-            modifier = Modifier.padding(start = 12.dp, end = 12.dp),
+            modifier = Modifier.padding(12.dp),
             text = "Color",
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.titleMedium
         )
         Row(
             modifier = Modifier
@@ -63,9 +111,9 @@ fun NoteCustomiseSection(
             }
         }
         Text(
-            modifier = Modifier.padding(start = 12.dp, end = 12.dp),
+            modifier = Modifier.padding(12.dp),
             text = "Priority",
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.titleMedium
         )
         NoteComposeTheme(viewModel = viewModel) {
             Slider(
@@ -79,9 +127,9 @@ fun NoteCustomiseSection(
             )
         }
         Text(
-            modifier = Modifier.padding(start = 12.dp, end = 12.dp),
+            modifier = Modifier.padding(12.dp),
             text = "Label",
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.titleMedium
         )
         NoteComposeTheme(viewModel = viewModel) {
             FlowRow(

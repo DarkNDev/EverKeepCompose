@@ -13,9 +13,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,15 +54,9 @@ fun NoteScreen(
                             contentDescription = "Done"
                         )
                     }
-                    IconButton(onClick = { viewModel.deleteClicked(navigate) }) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete"
-                        )
-                    }
                     IconButton(onClick = { showBottomSheet = true }) {
                         Icon(
-                            imageVector = Icons.Default.Sort,
+                            imageVector = Icons.Default.EditNote,
                             contentDescription = "Options"
                         )
                     }
@@ -82,9 +75,11 @@ fun NoteScreen(
     ) { contentPadding ->
         if (showBottomSheet) {
             EverKeepComposeTheme {
-                NoteCustomiseSection(viewModel = viewModel) {
-                    showBottomSheet = false
-                }
+                NoteCustomiseSection(
+                    viewModel = viewModel,
+                    onDismissRequest = { showBottomSheet = false },
+                    navigate = navigate
+                )
             }
         }
         Column(

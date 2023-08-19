@@ -1,10 +1,13 @@
 package com.darkndev.everkeepcompose.ui.note
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -83,6 +86,35 @@ class NoteViewModel @Inject constructor(
 
     fun deleteClicked(returnToHome: () -> Unit) = viewModelScope.launch {
         note?.let { noteDao.deleteNote(it.id) }
+        returnToHome()
+    }
+
+    fun copyClicked(showMessage: () -> Unit) = viewModelScope.launch {
+        note?.let {
+            noteDao.upsertNote(
+                Note(
+                    id = 0,
+                    title = title,
+                    content = content,
+                    priority = priority,
+                    color = colorRef,
+                    label = label
+                )
+            )
+        }
+        showMessage()
+    }
+
+    fun shareClicked(context: Context) {
+        startActivity(context, Intent.createChooser(Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, content)
+            type = "text/plain"
+        }, null), null)
+    }
+
+    fun archiveClicked(returnToHome: () -> Unit) = viewModelScope.launch {
+        note?.let { noteDao.upsertNote(it.copy(archived = !it.archived)) }
         returnToHome()
     }
 }

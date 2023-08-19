@@ -56,7 +56,7 @@ fun LabelScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "")
+                    Text(text = "Manage Labels")
                 },
                 navigationIcon = {
                     IconButton(onClick = { navigate() }) {
@@ -107,6 +107,7 @@ fun LabelScreen(
                         )
                     }
                 },
+                placeholder = { Text(text = "Label") },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
                     imeAction = ImeAction.Done

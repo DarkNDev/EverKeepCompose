@@ -13,7 +13,7 @@ interface NoteDao {
     @Query("DELETE FROM note WHERE id=:noteId")
     suspend fun deleteNote(noteId: Int)
 
-    @Query("SELECT * FROM note ORDER BY priority DESC")
-    fun getAllNotes(): Flow<List<Note>>
+    @Query("SELECT * FROM note WHERE archived=:archived ORDER BY priority DESC")
+    fun getAllNotes(archived:Boolean = false): Flow<List<Note>>
 
 }
