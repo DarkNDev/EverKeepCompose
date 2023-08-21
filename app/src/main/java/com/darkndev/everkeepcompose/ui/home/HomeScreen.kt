@@ -1,5 +1,6 @@
 package com.darkndev.everkeepcompose.ui.home
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -23,6 +25,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
@@ -35,6 +38,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,9 +47,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.darkndev.everkeepcompose.R
 import com.darkndev.everkeepcompose.models.Note
 import com.darkndev.everkeepcompose.ui.home.HomeViewModel.Companion.ALL
 import com.darkndev.everkeepcompose.ui.home.composable.NoteSearchBar
@@ -82,6 +89,9 @@ fun HomeScreen(
         sortOrderSectionVisible = false
     }
     var dropDownMenuState by remember {
+        mutableStateOf(false)
+    }
+    var showDialog by remember {
         mutableStateOf(false)
     }
     Scaffold(
@@ -144,6 +154,13 @@ fun HomeScreen(
                                     navigateArchivedScreen()
                                 }
                             )
+                            DropdownMenuItem(
+                                text = { Text(text = "About") },
+                                onClick = {
+                                    dropDownMenuState = false
+                                    showDialog = !showDialog
+                                }
+                            )
                         }
                     }
                 )
@@ -151,7 +168,9 @@ fun HomeScreen(
         },
         snackbarHost = { SnackbarHost(snackBarHostState) },
         floatingActionButton = {
+            val orientation = LocalConfiguration.current.orientation
             FloatingActionButton(
+                modifier = if (orientation == Configuration.ORIENTATION_LANDSCAPE) Modifier.navigationBarsPadding() else Modifier,
                 onClick = { navigateNoteScreen(null) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.background
@@ -164,6 +183,20 @@ fun HomeScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { contentPadding ->
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = { showDialog = false }
+                    ) {
+                        Text(text = "Ok")
+                    }
+                },
+                title = { Text(text = "About EverKeep") },
+                text = { Text(text = stringResource(id = R.string.app_description)) }
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()

@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.EverKeepCompose.SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/sea_green_light</item>
+        <item name="windowSplashScreenBackground">@color/dark_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/app_icon</item>
         <!--<item name="windowSplashScreenAnimationDuration">200</item>-->
         <item name="postSplashScreenTheme">@style/Theme.EverKeepCompose</item>

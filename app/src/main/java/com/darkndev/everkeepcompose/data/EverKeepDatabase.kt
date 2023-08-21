@@ -28,10 +28,10 @@ abstract class EverKeepDatabase : RoomDatabase() {
     ) : RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
-            val noteDao = database.get().noteDao()
+            //val noteDao = database.get().noteDao()
             val labelDao = database.get().labelDao()
             everKeepScope.launch {
-                noteDao.upsertNote(
+                /*noteDao.upsertNote(
                     Note(
                         id = 0,
                         title = "Hello World",
@@ -55,7 +55,7 @@ abstract class EverKeepDatabase : RoomDatabase() {
                         content = "Apple\nOrange\nMango\nBanana",
                         label = "Shopping"
                     )
-                )
+                )*/
                 labelDao.upsertLabel(Label(label = "Normal"))
                 labelDao.upsertLabel(Label(label = "Shopping"))
                 labelDao.upsertLabel(Label(label = "Groceries"))
